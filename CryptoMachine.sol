@@ -17,6 +17,17 @@ contract CryptoMachine is ERC721Upgradeable, OwnableUpgradeable {
 
 	Aitn aitn;
 
+	uint numPool;
+	mapping(uint => address) private pools;
+	mapping(address => uint16) private poolNumMachines;
+	mapping(address => uint[]) private poolMachines;
+	mapping(address => bool) private poolMinted;
+	mapping(address => uint64) private poolEfficiencies;
+	mapping(address => uint) private lastTimestamps;
+	mapping(address => uint) private poolBalances;
+
+	uint constant K = 1;
+
 	function initialize(string memory name, string memory symbol, address aitnAddr) public initializer {
 		__Ownable_init();
 		__ERC721_init(name, symbol);
@@ -65,6 +76,63 @@ contract CryptoMachine is ERC721Upgradeable, OwnableUpgradeable {
 		}
 		accountMachines[to].push(_tokenId);
 		safeTransferFrom(msg.sender, to, _tokenId);
+	}
+
+	function mintPool() public {
+		require(!poolMinted[msg.sender], "You have had an exist pool!"); 
+		pools[numPool] = msg.sender;
+		poolNumMachines[msg.sender] = 0; 
+		poolMinted[msg.sender] = true;
+		lastTimestamps[msg.sender] = block.timestamp;
+		numPool++;
+	}
+
+	function destoryPool() public {
+		require(poolMinted[msg.sender], "The pool is not exist!"); 
+		require(poolNumMachines[msg.sender] == 0, "Operation is invalid: You are destory a non-empty pool");
+		require(poolBalances[msg.sender] == 0, "You have some minerals to withDraw!");
+		delete pools[numPool];
+		delete poolNumMachines[msg.sender];
+
+		delete poolEfficiencies[msg.sender];
+		delete lastTimestamps[msg.sender];
+		delete poolBalances[msg.sender];
+		poolMinted[msg.sender] = false;
+		numPool--;
+	}
+
+	function joinPool(address _poolMinter, uint _tokenId) public {
+		require(poolMinted[_poolMinter], "The pool is not exist!"); 
+		require(ownerOf(_tokenId) == msg.sender, "Permission denied: the machine doesn't belong to you!");
+		require(machinePools[_tokenId] == address(0x0), "This machine is already in a pool!");
+		machinePools[_tokenId] = _poolMinter;
+		poolMachines[_poolMinter].push(_tokenId);
+		
+		uint nowTimestamp = block.timestamp;
+		poolBalances[_poolMinter] += poolEfficiencies[_poolMinter] * K * (nowTimestamp - lastTimestamps[_poolMinter]);
+		poolEfficiencies[_poolMinter] += efficiencies[_tokenId];
+		lastTimestamps[_poolMinter] = nowTimestamp;
+		poolNumMachines[_poolMinter]++;
+	}
+
+	function quitPool(uint _tokenId) public {
+		require(ownerOf(_tokenId) == msg.sender, "Permission denied: the machine doesn't belong to you!");
+		address _poolMinter = machinePools[_tokenId];
+		require(_poolMinter != address(0x0), "This machine is not in any pool!");
+		delete machinePools[_tokenId];
+
+		uint nowTimestamp = block.timestamp;
+		poolBalances[_poolMinter] += poolEfficiencies[_poolMinter] * K * (nowTimestamp - lastTimestamps[_poolMinter]);
+		poolEfficiencies[_poolMinter] -= efficiencies[_tokenId];
+		lastTimestamps[_poolMinter] = nowTimestamp;
+
+		for(uint i = 0; i < poolMachines[msg.sender].length; i++) {
+			if(poolMachines[msg.sender][i] == _tokenId) {
+				poolMachines[msg.sender][i] = poolMachines[msg.sender][poolMachines[msg.sender].length - 1];
+				poolMachines[msg.sender].pop();
+			}
+		}
+		poolNumMachines[_poolMinter]--;
 	}
 
 	function debug() public onlyOwner {
