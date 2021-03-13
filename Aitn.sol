@@ -19,19 +19,4 @@ contract Aitn is ERC20Upgradeable, OwnableUpgradeable {
 	function burn(address account, uint amount) public onlyOwner {
 		_burn(account, amount);
 	}
-
-	// NOTE: IMPL OF MINING
-	
-	// W1: OWNER MINT -> TRANSFER STAKING CONTRACT -> STAKING CONTRACT TRANSFER TO USERS
-	// W2: ADD A MINT FUNCTION FOR STAKING CONTRACT
-
-//	address staking_contract;
-	// TODO: SET METHOD
-
-	/*
-	function mint_staking_reward(address to, uint256 amount) {
-		require(msg.sender == staking_contract);
-		_mint(to, amount);
-	}
-	*/
 }
