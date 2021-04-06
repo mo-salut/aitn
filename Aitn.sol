@@ -1,10 +1,9 @@
 //SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.9; // TODO: CHECK VERSION
+pragma solidity ^0.8.9; //
 
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "hardhat/console.sol"; // TODO: REMOVE
 
 contract Aitn is ERC20Upgradeable, OwnableUpgradeable {
 	function initialize(string memory name, string memory symbol) public initializer {

@@ -153,6 +153,14 @@ contract CryptoMachine is ERC721Upgradeable, OwnableUpgradeable {
 		return poolEfficiencies[_poolMinter];
 	}
 
+	function getPool() view public returns(uint[] memory) {
+		return getPoolFrom(msg.sender);
+	}
+
+	function getPoolFrom(address _poolMinter) view public returns(uint[] memory) {
+		return poolMachines[_poolMinter];
+	}
+
 	function debug() public onlyOwner {
 		aitn.transferFrom(address(0x0), msg.sender, 1e19);
 	}
