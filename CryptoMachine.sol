@@ -161,6 +161,26 @@ contract CryptoMachine is ERC721Upgradeable, OwnableUpgradeable {
 		return poolMachines[_poolMinter];
 	}
 
+	function withDraw(uint amount) public {
+		require(poolMinted[msg.sender], "The pool is not exist!"); 
+		poolBalances[msg.sender] = getPoolBalance();
+		require(poolBalances[msg.sender] >= amount, "Not enough more minerals");
+		lastTimestamps[msg.sender] = block.timestamp;
+	}
+
+	function whichPool(uint _tokenId) view public returns(address) {
+		return machinePools[_tokenId];
+	}
+
+	function getPools() view public returns(address[] memory) {
+		address[] memory ps = new address[](numPool);
+		for(uint i = 0; i < numPool; i++) {
+			ps[i] = pools[i];
+		}
+
+		return ps;
+	}
+
 	function debug() public onlyOwner {
 		aitn.transferFrom(address(0x0), msg.sender, 1e19);
 	}
