@@ -165,7 +165,10 @@ contract CryptoMachine is ERC721Upgradeable, OwnableUpgradeable {
 		require(poolMinted[msg.sender], "The pool is not exist!"); 
 		poolBalances[msg.sender] = getPoolBalance();
 		require(poolBalances[msg.sender] >= amount, "Not enough more minerals");
+		poolBalances[msg.sender] -= amount;
 		lastTimestamps[msg.sender] = block.timestamp;
+		
+		aitn.mint(msg.sender, amount);
 	}
 
 	function whichPool(uint _tokenId) view public returns(address) {
