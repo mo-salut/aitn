@@ -102,8 +102,8 @@ describe("pools operations", function () {
 		let pools = await cryptoMachine.getPools();
 		const num = pools.length;
 
-	//	let block = await ethers.provider.getBlock();
-	//	console.log(block.number, block.timestamp);
+		let block = await ethers.provider.getBlock();
+		console.log(block.number, block.timestamp);
 		await cryptoMachine.mintPool();
 
 		expect(await cryptoMachine.getPoolBalance()).to.equal(0);
