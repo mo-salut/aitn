@@ -161,6 +161,7 @@ contract CryptoMachine is ERC721Upgradeable, OwnableUpgradeable {
 		return poolMachines[_poolMinter];
 	}
 
+/*
 	function removeMachine(uint _tokenId) {
 		require(poolMinted[_poolMinter], "The pool is not exist!"); 
 		require(machinePools[_tokenId] == msg.sender, "The machine is not in the pool");
@@ -179,6 +180,7 @@ contract CryptoMachine is ERC721Upgradeable, OwnableUpgradeable {
 		}
 		poolNumMachines[_poolMinter]--;
 	}
+*/
 
 	function withDraw2(uint amount) public {
 		require(poolBalances[msg.sender] >= amount, "Not enough more minerals");
