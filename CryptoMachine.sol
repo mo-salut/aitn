@@ -4,7 +4,6 @@ pragma solidity ^0.8.9; // TODO: CHECK VERSION
 
 import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "hardhat/console.sol"; // TODO: REMOVE
 
 import "./Aitn.sol";
 
@@ -209,9 +208,5 @@ contract CryptoMachine is ERC721Upgradeable, OwnableUpgradeable {
 		}
 
 		return ps;
-	}
-
-	function debug() public onlyOwner {
-		aitn.transferFrom(address(0x0), msg.sender, 1e19);
 	}
 }
