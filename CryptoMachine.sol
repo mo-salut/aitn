@@ -160,27 +160,6 @@ contract CryptoMachine is ERC721Upgradeable, OwnableUpgradeable {
 		return poolMachines[_poolMinter];
 	}
 
-/*
-	function removeMachine(uint _tokenId) {
-		require(poolMinted[_poolMinter], "The pool is not exist!"); 
-		require(machinePools[_tokenId] == msg.sender, "The machine is not in the pool");
-		delete machinePools[_tokenId];
-
-		uint nowTimestamp = block.timestamp;
-		poolBalances[_poolMinter] += poolEfficiencies[_poolMinter] * K * (nowTimestamp - lastTimestamps[_poolMinter]);
-		poolEfficiencies[_poolMinter] -= efficiencies[_tokenId];
-		lastTimestamps[_poolMinter] = nowTimestamp;
-
-		for(uint i = 0; i < poolMachines[msg.sender].length; i++) {
-			if(poolMachines[msg.sender][i] == _tokenId) {
-				poolMachines[msg.sender][i] = poolMachines[msg.sender][poolMachines[msg.sender].length - 1];
-				poolMachines[msg.sender].pop();
-			}
-		}
-		poolNumMachines[_poolMinter]--;
-	}
-*/
-
 	function withDraw2(uint amount) public {
 		require(poolBalances[msg.sender] >= amount, "Not enough more minerals");
 		poolBalances[msg.sender] = getPoolBalance();
@@ -210,3 +189,24 @@ contract CryptoMachine is ERC721Upgradeable, OwnableUpgradeable {
 		return ps;
 	}
 }
+
+/*
+	function removeMachine(uint _tokenId) {
+		require(poolMinted[_poolMinter], "The pool is not exist!"); 
+		require(machinePools[_tokenId] == msg.sender, "The machine is not in the pool");
+		delete machinePools[_tokenId];
+
+		uint nowTimestamp = block.timestamp;
+		poolBalances[_poolMinter] += poolEfficiencies[_poolMinter] * K * (nowTimestamp - lastTimestamps[_poolMinter]);
+		poolEfficiencies[_poolMinter] -= efficiencies[_tokenId];
+		lastTimestamps[_poolMinter] = nowTimestamp;
+
+		for(uint i = 0; i < poolMachines[msg.sender].length; i++) {
+			if(poolMachines[msg.sender][i] == _tokenId) {
+				poolMachines[msg.sender][i] = poolMachines[msg.sender][poolMachines[msg.sender].length - 1];
+				poolMachines[msg.sender].pop();
+			}
+		}
+		poolNumMachines[_poolMinter]--;
+	}
+*/
