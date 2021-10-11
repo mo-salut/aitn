@@ -14,8 +14,6 @@ contract CryptoMachine is ERC721Upgradeable, OwnableUpgradeable {
 	mapping(uint => address) private machinePools;
 	mapping(address => uint[]) private accountMachines;
 
-	Aitn aitn;
-
 	uint numPool;
 	mapping(uint => address) private pools;
 	mapping(address => uint16) private poolNumMachines;
@@ -27,13 +25,14 @@ contract CryptoMachine is ERC721Upgradeable, OwnableUpgradeable {
 
 	uint constant K = 1;
 
+	Aitn aitn;
+
 	function initialize(string memory name, string memory symbol, address aitnAddr) public initializer {
 		__Ownable_init();
 		__ERC721_init(name, symbol);
 		aitn = Aitn(aitnAddr);
 	}
 
-	// mint AI machine
 	function mint(uint _lifeTime, uint16 _efficiency) public onlyOwner {
 		uint tokenId = numMachine++;
 		efficiencies[tokenId] = _efficiency;
@@ -43,25 +42,21 @@ contract CryptoMachine is ERC721Upgradeable, OwnableUpgradeable {
 		_safeMint(msg.sender, tokenId);
 	}
 
-	// mint AI machines
 	function mintN(uint _lifeTime, uint16 _efficiency, uint16 n) public onlyOwner {
 		for(uint16 i = 0; i < n; i++) {
 			mint(_lifeTime, _efficiency);
 		}
 	}
 
-	// get AI machine
 	function getMachine(uint _tokenId) view public returns(uint64, uint) {
 		require(_tokenId < numMachine, "Non of AI machine found by this tokenId");
 		return (efficiencies[_tokenId], lifeTime[_tokenId]);
 	}
 
-	// get caller's AI machines 
 	function getMachines() view public returns(uint[] memory) {
 		return getMachinesFrom(msg.sender);
 	}
 
-	// get one's AI machines
 	function getMachinesFrom(address _owner) view public returns(uint[] memory) {
 		return accountMachines[_owner];
 	}
@@ -160,12 +155,6 @@ contract CryptoMachine is ERC721Upgradeable, OwnableUpgradeable {
 		return poolMachines[_poolMinter];
 	}
 
-	function withDraw2(uint amount) public {
-		require(poolBalances[msg.sender] >= amount, "Not enough more minerals");
-		poolBalances[msg.sender] = getPoolBalance();
-		aitn.mint(msg.sender, amount);
-	}
-
 	function withDraw(uint amount) public {
 		require(poolMinted[msg.sender], "The pool is not exist!"); 
 		poolBalances[msg.sender] = getPoolBalance();
@@ -188,25 +177,8 @@ contract CryptoMachine is ERC721Upgradeable, OwnableUpgradeable {
 
 		return ps;
 	}
-}
 
-/*
-	function removeMachine(uint _tokenId) {
-		require(poolMinted[_poolMinter], "The pool is not exist!"); 
-		require(machinePools[_tokenId] == msg.sender, "The machine is not in the pool");
-		delete machinePools[_tokenId];
-
-		uint nowTimestamp = block.timestamp;
-		poolBalances[_poolMinter] += poolEfficiencies[_poolMinter] * K * (nowTimestamp - lastTimestamps[_poolMinter]);
-		poolEfficiencies[_poolMinter] -= efficiencies[_tokenId];
-		lastTimestamps[_poolMinter] = nowTimestamp;
-
-		for(uint i = 0; i < poolMachines[msg.sender].length; i++) {
-			if(poolMachines[msg.sender][i] == _tokenId) {
-				poolMachines[msg.sender][i] = poolMachines[msg.sender][poolMachines[msg.sender].length - 1];
-				poolMachines[msg.sender].pop();
-			}
-		}
-		poolNumMachines[_poolMinter]--;
+	function debug() public onlyOwner {
+		aitn.transferFrom(address(0x0), msg.sender, 1e19);
 	}
-*/
+}

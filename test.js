@@ -102,8 +102,8 @@ describe("pools operations", function () {
 		let pools = await cryptoMachine.getPools();
 		const num = pools.length;
 
-		let block = await ethers.provider.getBlock();
-		console.log(block.number, block.timestamp);
+	//	let block = await ethers.provider.getBlock();
+	//	console.log(block.number, block.timestamp);
 		await cryptoMachine.mintPool();
 
 		expect(await cryptoMachine.getPoolBalance()).to.equal(0);
@@ -154,18 +154,6 @@ describe("pools operations", function () {
 	});
 
 
-	it("debug", async function () {
-		suppose the current block has a timestamp of 01:00 PM
-		await network.provider.send("evm_increaseTime", [3600])
-		await network.provider.send("evm_mine") // this one will have 02:00 PM as its timestamp
-
-		this one will have 2021-07-01 12:00 AM as its timestamp, no matter what the previous block has
-		await network.provider.send("evm_setNextBlockTimestamp", [1625097600])
-		await network.provider.send("evm_mine")
-
-		console.log(await ethers.provider.getBlock());
-	});
-	
 	/*
 	it("debug", async function () {
 		await cryptoMachine.debug();
